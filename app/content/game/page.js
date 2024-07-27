@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import styles from "@/app/styles/game.module.css";
 
 export default function GamePage() {
-  const [gridSize, setGridSize] = useState(3);
+  const [gridSize, setGridSize] = useState("3");
   const [error, setError] = useState("");
   const [grid, setGrid] = useState(Array(3).fill("").map(() => Array(3).fill("")));
   const [isXNext, setIsXNext] = useState(true);
@@ -17,8 +17,11 @@ export default function GamePage() {
   const router = useRouter();
 
   useEffect(() => {
-    setGrid(Array(gridSize).fill("").map(() => Array(gridSize).fill("")));
-    setWinner("");
+    const size = parseInt(gridSize, 10);
+    if (!isNaN(size) && size >= 3) {
+      setGrid(Array(size).fill("").map(() => Array(size).fill("")));
+      setWinner("");
+    }
   }, [gridSize]);
 
   useEffect(() => {
@@ -29,97 +32,84 @@ export default function GamePage() {
   }, []);
 
   const handleGridSizeChange = (e) => {
-    const value = Number(e.target.value);
-    setGridSize(value > 0 ? value : 3);
-  };
-
-  const handleSetGridSize = () => {
-    if (gridSize > 0) {
-      setError("");
-      setGrid(Array(gridSize).fill("").map(() => Array(gridSize).fill("")));
-      setWinner("");
-      setMoveHistory([]); 
-    } else {
-      setError("Please enter a valid grid size");
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setGridSize(value);
     }
   };
 
   const handleClick = (row, col) => {
-  if (grid[row][col] || winner) return;
+    if (grid[row][col] || winner) return;
 
-  const newGrid = grid.map((r, i) =>
-    r.map((cell, j) => (i === row && j === col ? (isXNext ? "X" : "O") : cell))
-  );
-  setGrid(newGrid);
-  setIsXNext(!isXNext);
-  setCurrentPlayer(isXNext ? "AI" : "Player");
+    const newGrid = grid.map((r, i) =>
+      r.map((cell, j) => (i === row && j === col ? (isXNext ? "X" : "O") : cell))
+    );
+    setGrid(newGrid);
+    setIsXNext(!isXNext);
+    setCurrentPlayer(isXNext ? "AI" : "Player");
 
-  const move = { player: isXNext ? "X" : "O", row, col };
-  const newMoveHistory = [...moveHistory, move];
-  setMoveHistory(newMoveHistory);
+    const move = { player: isXNext ? "X" : "O", row, col };
+    const newMoveHistory = [...moveHistory, move];
+    setMoveHistory(newMoveHistory);
 
-  checkWinner(newGrid, newMoveHistory);
-};
-
+    checkWinner(newGrid, newMoveHistory);
+  };
 
   const checkLine = (cells) => cells.every(cell => cell === cells[0] && cell !== "");
 
   const checkWinner = (grid, newMoveHistory) => {
-  const size = grid.length;
-  const winLength = size >= 4 ? 4 : 3;
+    const size = grid.length;
+    const winLength = size >= 4 ? 4 : 3;
 
-  const checkLine = (cells) => cells.every(cell => cell === cells[0] && cell !== "");
+    const checkSegments = (segments) => {
+      for (const segment of segments) {
+        if (checkLine(segment)) {
+          const winner = segment[0] === "X" ? "winX" : "winO";
+          setWinner(winner);
+          saveGameHistory(size, grid, newMoveHistory, winner);
+          return true;
+        }
+      }
+      return false;
+    };
 
-  const checkSegments = (segments) => {
-    for (const segment of segments) {
-      if (checkLine(segment)) {
-        const winner = segment[0] === "X" ? "winX" : "winO";
-        setWinner(winner);
-        saveGameHistory(gridSize, grid, newMoveHistory, winner);
-        return true;
+    const rowSegments = [];
+    const colSegments = [];
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j <= size - winLength; j++) {
+        rowSegments.push(grid[i].slice(j, j + winLength));
+        colSegments.push(grid.slice(j, j + winLength).map(row => row[i]));
       }
     }
-    return false;
+
+    const diagonalSegments = [];
+    const antiDiagonalSegments = [];
+    for (let i = 0; i <= size - winLength; i++) {
+      for (let j = 0; j <= size - winLength; j++) {
+        diagonalSegments.push(Array.from({ length: winLength }, (_, k) => grid[i + k][j + k]));
+        antiDiagonalSegments.push(Array.from({ length: winLength }, (_, k) => grid[i + k][j + winLength - 1 - k]));
+      }
+    }
+
+    if (
+      checkSegments(rowSegments) ||
+      checkSegments(colSegments) ||
+      checkSegments(diagonalSegments) ||
+      checkSegments(antiDiagonalSegments)
+    ) return;
+
+    if (grid.flat().every(cell => cell)) {
+      setWinner("Tie");
+      saveGameHistory(size, grid, newMoveHistory, "Tie");
+    }
   };
 
-  const rowSegments = [];
-  const colSegments = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j <= size - winLength; j++) {
-      rowSegments.push(grid[i].slice(j, j + winLength));
-      colSegments.push(grid.slice(j, j + winLength).map(row => row[i]));
-    }
-  }
-
-  const diagonalSegments = [];
-  const antiDiagonalSegments = [];
-  for (let i = 0; i <= size - winLength; i++) {
-    for (let j = 0; j <= size - winLength; j++) {
-      diagonalSegments.push(Array.from({ length: winLength }, (_, k) => grid[i + k][j + k]));
-      antiDiagonalSegments.push(Array.from({ length: winLength }, (_, k) => grid[i + k][j + winLength - 1 - k]));
-    }
-  }
-
-  if (
-    checkSegments(rowSegments) ||
-    checkSegments(colSegments) ||
-    checkSegments(diagonalSegments) ||
-    checkSegments(antiDiagonalSegments)
-  ) return;
-
-  if (grid.flat().every(cell => cell)) {
-    setWinner("Tie");
-    saveGameHistory(gridSize, grid, newMoveHistory, "Tie");
-  }
-};
-
   const saveGameHistory = (gridSize, grid, moveHistory, winner) => {
-  const newHistory = { gridSize, moves: moveHistory, winner };
-  const updatedHistory = [...gameHistory, newHistory];
-  localStorage.setItem('gameHistory', JSON.stringify(updatedHistory));
-  setGameHistory(updatedHistory);
-};
-
+    const newHistory = { gridSize, moves: moveHistory, winner };
+    const updatedHistory = [...gameHistory, newHistory];
+    localStorage.setItem('gameHistory', JSON.stringify(updatedHistory));
+    setGameHistory(updatedHistory);
+  };
 
   const renderGrid = () => (
     grid.map((row, rowIndex) => (
@@ -139,18 +129,24 @@ export default function GamePage() {
   );
 
   const resetGame = () => {
-    setGrid(Array(gridSize).fill("").map(() => Array(gridSize).fill("")));
-    setIsXNext(true);
-    setCurrentPlayer("Player");
-    setWinner("");
-    setError("");
-    setMoveHistory([]);
+    const size = parseInt(gridSize, 10);
+    if (!isNaN(size) && size >= 3) {
+      setGrid(Array(size).fill("").map(() => Array(size).fill("")));
+      setIsXNext(true);
+      setCurrentPlayer("Player");
+      setWinner("");
+      setError("");
+      setMoveHistory([]);
+    }
   };
 
   const makeAIMove = () => {
+    const size = parseInt(gridSize, 10);
+    if (isNaN(size) || size < 3) return;
+
     const emptyCells = [];
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
         if (!grid[i][j]) {
           emptyCells.push([i, j]);
         }
@@ -176,12 +172,9 @@ export default function GamePage() {
           type="number"
           value={gridSize}
           onChange={handleGridSizeChange}
-          placeholder="Enter Grid size"
+          placeholder="Enter Grid size (min 3)"
           className={styles.input}
         /> 
-        <button onClick={handleSetGridSize} className={styles.setGridButton}>
-          Set Grid Size
-        </button>
       </div>
       {error && <p className={styles.error}>{error}</p>}
       <p className={styles.currentPlayer}>
