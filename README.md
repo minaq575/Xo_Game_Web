@@ -1,8 +1,6 @@
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 # Xo Game with next.js
-<div id="header" align="center">
-  <img src="https://github.com/user-attachments/assets/26cb9d1f-bc38-492f-a2fd-0dd5aa3257ad" width="100"/>
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+  <img src="https://github.com/user-attachments/assets/26cb9d1f-bc38-492f-a2fd-0dd5aa3257ad" width="100"  align="center"/>
 
 ## Setup and Run Project
 Step 1 : Install Dependencies
