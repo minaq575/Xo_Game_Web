@@ -1,6 +1,8 @@
 # Xo Game with next.js
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-  <img src="https://github.com/user-attachments/assets/26cb9d1f-bc38-492f-a2fd-0dd5aa3257ad" width="100"  align="center"/>
+<div id="header" align="center">
+  <img src="https://github.com/user-attachments/assets/26cb9d1f-bc38-492f-a2fd-0dd5aa3257ad" width="100"/>
+</div>
 
 ## Setup and Run Project
 Step 1 : Install Dependencies
@@ -30,21 +32,28 @@ Step 3 : Run the Development Server
 **Select Grid Size**
 <div id="header" align="center">
   <img src="https://github.com/user-attachments/assets/54de5e0c-4a02-4bda-8cd8-de297ecb590b"/>
-  
+</div>
+
 #
+
 **Bot AI Move**
 <div id="header" align="center">
   <img src="https://github.com/user-attachments/assets/6069367a-96b6-4725-ae94-22b577351d37"/>
-  
+</div>
+
 #
+
 **Check win or tie**
 <div id="header" align="center">
   <img src="https://github.com/user-attachments/assets/8f0c13fb-6aa8-4600-a3b7-fbd7846a96d9"/>
-  
+</div>
+
 #
+
 **Check history page**
 <div id="header" align="center">
   <img src="https://github.com/user-attachments/assets/e15748c9-e4a7-46ef-a0fd-a5b1d09b9d4e"/>
+</div>
   
 ## Note
 
