@@ -7,6 +7,7 @@
     background: linear-gradient(135deg, #00f7ff, #015eff);
     padding: 20px;
     font-family: 'Noto Sans Thai', sans-serif;
+    
 }
 
 .inputContainer {
@@ -79,6 +80,7 @@
     cursor: pointer;
     margin-left: 10px;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    
 }
 
 .cell:hover {
@@ -116,4 +118,59 @@
 .button:hover {
     background-color: #0056b3;
     color: white;
+}
+
+
+@media (max-width: 768px) {
+    .input {
+        width: 150px;
+        font-size: 18px;
+    }
+
+    .setGridButton,
+    .button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    .currentPlayer {
+        font-size: 20px;
+    }
+
+    .cell {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .winner {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .input {
+        width: 120px;
+        font-size: 16px;
+    }
+
+    .setGridButton,
+    .button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .currentPlayer {
+        font-size: 18px;
+    }
+
+    .cell {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .winner {
+        font-size: 20px;
+    }
 }
